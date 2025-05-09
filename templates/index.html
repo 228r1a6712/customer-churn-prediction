@@ -267,6 +267,9 @@
     </div>
 
     <script>
+        // Get the base URL dynamically
+        const baseURL = window.location.origin;
+        
         document.getElementById('predictionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -282,15 +285,12 @@
                 EstimatedSalary: parseFloat(document.getElementById('EstimatedSalary').value)
             };
 
-            const resultDiv = document.getElementById('result');
             try {
                 const button = document.querySelector('button');
                 button.textContent = 'Predicting...';
                 button.disabled = true;
 
-                console.log('Sending data:', formData); // Debug log
-
-                const response = await fetch('http://127.0.0.1:8000/predict', {
+                const response = await fetch(`${baseURL}/predict`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -303,8 +303,7 @@
                 }
 
                 const result = await response.json();
-                console.log('Received result:', result); // Debug log
-
+                const resultDiv = document.getElementById('result');
                 resultDiv.style.display = 'block';
                 resultDiv.innerHTML = `<h2>Prediction Result</h2><p>${result.prediction}</p>`;
                 
@@ -316,7 +315,8 @@
                 button.disabled = false;
 
             } catch (error) {
-                console.error('Error details:', error); // Detailed error logging
+                console.error('Error details:', error);
+                const resultDiv = document.getElementById('result');
                 resultDiv.style.display = 'block';
                 resultDiv.innerHTML = `<h2>Error</h2><p>Failed to make prediction. Please try again.<br>Error: ${error.message}</p>`;
                 resultDiv.className = 'prediction-danger';
